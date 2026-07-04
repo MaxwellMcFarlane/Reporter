@@ -1,0 +1,98 @@
+author:
+  first name: Maxwell
+  last name : McFarlane
+  trigram   : MMF
+
+runset:
+  - sample1 : 
+      name : Sample Report Runset
+      description : A sample runset for testing the Reporter module.
+      xval : "Time (ns)"
+      yval : "X Value"
+      zval : ""
+      plot-config :
+        type : "line-2d"
+        xlabel : "X-Axis"
+        ylabel : "Y-Axis"
+        title : "Sample Line Plot"
+        xlimits : [0, 10]
+        ylimits : [0, 100]
+        xscale : 1
+        yscale : 1
+        # xlim   : [0, 10]
+        # ylim   : [0, 100]
+        fontsize : 12
+        figsize : [8, 6]
+        legend_loc : "upper right"
+        key :
+          tc1 : 
+            color : "blue"
+            style : "solid"
+          tc2 :
+            color : "orange"
+            style : "dashed"
+          tc3 :
+            color : "green"
+            style : "dotted"
+          tc4 :
+            color : "red"
+            style : "dashdot"
+      data :
+        tc1 : data/sample.csv
+        tc2 : data/sample1.csv
+        tc3 : data/sample2.csv
+        tc4 : data/sample3.csv
+  - sample2 : 
+      name : Sample Report Runset
+      description : A sample runset for testing the Reporter module.
+      xval : "Frequency"
+      yval : "Cell Area"
+      zval : "Block"
+      zmatch : "A"
+      plot-config :
+        type : "line-2d"
+        xlabel : "Frequency (MHz)"
+        ylabel : "Cell Area (um^2)"
+        title : "Cell Area vs Frequency"
+        xlimits : [0, 10]
+        ylimits : [0, 100]
+        xscale : 1
+        yscale : 1
+        figsize : [8, 6]
+      data :
+        tc1 : data/sample_block.csv
+  - sample3 :
+      name : Box Whisker Example
+      description : Example runset that generates a box-whisker plot by frequency.
+      xval : "Frequency"
+      yval : "Cell Area"
+      zval : ""
+      plot-config :
+        type : "box-whisker"
+        xlabel : "Frequency (MHz)"
+        ylabel : "Cell Area (um^2)"
+        title : "Cell Area Distribution by Frequency"
+        fontsize : 12
+        figsize : [8, 6]
+      data :
+        tc1 : data/sample_block.csv
+  - sample4 :
+      name : Stacked Bar Example
+      description : Example runset that generates a stacked bar graph by frequency.
+      xval : "Frequency"
+      yval : "A"
+      zval : "B"
+      plot-config :
+        type : "stacked-bar"
+        xlabel : "Frequency (MHz)"
+        ylabel : "Cell Area (um^2)"
+        title : "Stacked Cell Area by Frequency"
+        fontsize : 12
+        figsize : [8, 6]
+        legend_loc : "upper left"
+      data :
+        tc1 : data/sample_stacked.csv
+
+# MPL styles : default, classic, ggplot, seaborn, bmh, dark_background, fivethirtyeight
+report_settings:
+  style : default

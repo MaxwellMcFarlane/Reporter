@@ -1,0 +1,6 @@
+# File Extensions
+
+# Directories
+*/data/*
+!reporter/data/*
+*/outputs/*

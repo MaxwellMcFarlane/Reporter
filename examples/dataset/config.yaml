@@ -1,0 +1,28 @@
+- Owner: "Max"
+- Task: "Frankenstein's FPU (mmf-fpu branch)"
+  Resource: "Max"
+  SubTasks:
+    - Name: "Investigate OHG FMA Implementation"
+      Start: "2026-01-01"
+      Finish : "2026-02-01" 
+      Complete: True
+    - Name: "Investigate Novel Division Methods & Latencies For Upgrading DivSqrt"
+      Start: "2026-02-01"
+      Finish : "2026-02-15" 
+      Complete: True
+    - Name: "Upgrade PULP DivSqrt Unit"
+      Start: "2026-02-15"
+      Finish : "2026-03-25" 
+      Complete: True
+    - Name: "Merge FMA & DIVSQRT into Ganymede Platform"
+      Start: "2026-03-25"
+      Duration : 7
+      Complete: False
+    - Name: "Investigate Alternative (SRT) DivSqrt Units"
+      Start: "2026-04-01"
+      Duration : 7
+      Complete: False
+    - Name: "Build SRT Divider of Choice"
+      Start: "2026-04-08"
+      Duration : 14
+      Complete: False
