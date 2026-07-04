@@ -1,218 +1,130 @@
-# Utilities Workspace
+# Reporter
 
-Utilities is a multi-module Python workspace for personal operations and analysis tasks.
-It combines reusable modules under libs/py-modules with runnable examples under examples/.
+Lightweight Python workspace for dataset loading, plotting helpers, and config-driven report generation.
 
-The project is organized to support day-to-day workflows such as:
+## Directory Layout
 
-1. Budget and transaction analysis
-2. Dataset loading and preprocessing
-3. Report and plot generation
-4. Schedule/task tree management
-5. Focused tools (flights scraping, trips, tracker, UI)
+```text
+.
+├── README.md
+├── setup.sh
+├── examples/
+│   ├── dataset/
+│   │   ├── README.md
+│   │   ├── config.yaml
+│   │   ├── run.sh
+│   │   └── data/
+│   │       └── sample.csv
+│   ├── plotter/
+│   │   ├── README.md
+│   │   ├── run.sh
+│   │   └── data/
+│   │       └── sample.csv
+│   └── reporter/
+│       ├── README.md
+│       ├── config.yaml
+│       ├── run.sh
+│       ├── data/
+│       │   ├── sample.csv
+│       │   ├── sample1.csv
+│       │   ├── sample2.csv
+│       │   ├── sample3.csv
+│       │   ├── sample_block.csv
+│       │   └── sample_stacked.csv
+│       └── outputs/
+│           ├── sample1/
+│           ├── sample2/
+│           ├── sample3/
+│           │   ├── latency_data_pretty_tc1.csv
+│           │   └── latency_table_tc1.csv
+│           └── sample4/
+└── libs/
+    └── py-modules/
+        ├── __init__.py
+        ├── dataset.py
+        ├── plotter.py
+        ├── reporter.py
+        └── utils.py
+```
 
-## Project Layout
+## Modules
 
-Top-level directories:
+1. `dataset.py`
+   - CSV-backed dataset object with basic validation and column filtering.
+2. `plotter.py`
+   - Reusable plotting functions (line, bar, stacked bar, scatter, box, 2D color scatter) and save helpers.
+3. `reporter.py`
+   - Reads YAML run configurations, loads datasets, and generates report plots/artifacts into per-run output directories.
+4. `utils.py`
+   - Logging and small utility helpers used by the modules.
 
-1. bin/
-	- CLI shell entry points.
-2. docs/
-	- Diagrams, schedules, reports, and presentation assets.
-3. examples/
-	- Runnable module examples with local data/config/output folders.
-4. libs/py-modules/
-	- Main Python modules.
-5. libs/shell/
-	- Shared shell helper scripts.
-6. tests/
-	- Python test files and helper scripts.
-7. setup.sh
-	- Environment bootstrap script (sets XUTILSPATH, LIBSPATH, PYTHONPATH).
+## Setup
 
-## Core Modules
-
-Main module files in libs/py-modules:
-
-1. budget.py
-	- Budget analysis workflows and dashboard/report entry points.
-2. dataset.py
-	- Dataset loading/normalization utilities and CLI entry.
-3. reporter.py
-	- Runset/config-driven reporting and plotting orchestration.
-4. plotter.py
-	- Plot generation helpers.
-5. schedule.py
-	- Schedule modeling and JSON/tree operations.
-6. task.py
-	- Task tree/node data structures and utilities.
-7. flights.py
-	- Google Flights scraping utility that exports flight data to CSV.
-8. tracker.py
-	- Tracking-oriented CLI workflows.
-9. trips.py
-	- Trip budget calculator CLI.
-10. ui.py
-	- PyQt-based desktop UI utility.
-11. utils.py
-	- Shared helper functions used across modules.
-
-## Examples
-
-Each folder in examples/ is intended to be run from inside that folder.
-
-Available examples:
-
-1. budget/
-2. dataset/
-3. flights/
-4. gym/
-5. plotter/
-6. reporter/
-7. schedule/
-8. ui/
-
-Most examples include:
-
-1. run.sh
-	- Example launch script.
-2. config.yaml
-	- Module configuration (for modules that support config).
-3. data/
-	- Sample input files.
-4. outputs/
-	- Generated artifacts.
-
-## Quick Start
-
-### 1) Bootstrap Environment
-
-From repository root:
+From repo root:
 
 ```bash
 source setup.sh
 ```
 
-This exports:
+This sets:
 
-1. XUTILSPATH: repository root path.
-2. LIBSPATH: libs/py-modules path.
-3. PYTHONPATH: includes libs/py-modules for module imports.
-4. PATH: includes bin/ scripts.
+1. `XUTILSPATH`
+2. `LIBSPATH`
+3. `PYTHONPATH`
 
-### 2) Install Python Dependencies
+## Python Dependencies
 
-No single lockfile is currently defined at root, so install dependencies used by your target module(s).
-Commonly needed packages include:
-
-1. pandas
-2. numpy
-3. matplotlib
-4. pyyaml
-5. pytest (for tests)
-
-Optional module-specific packages:
-
-1. playwright (flights module)
-2. PyQt6 (ui module)
-
-Example install command:
+Install the packages used by the current modules:
 
 ```bash
-python3 -m pip install pandas numpy matplotlib pyyaml pytest playwright PyQt6
-playwright install chromium
+python3 -m pip install pandas numpy matplotlib pyyaml
 ```
 
-### 3) Run an Example
+## Running Examples
+
+Run examples from their folder after sourcing `setup.sh` from repo root.
+
+1. Dataset example
 
 ```bash
-cd examples/budget
+cd examples/dataset
 source ../../setup.sh
 source run.sh
 ```
 
-## Common Workflows
-
-### Budget Workflow
-
-Location: examples/budget
-
-Typical command pattern:
+2. Plotter example
 
 ```bash
-python3 ${LIBSPATH}/budget.py --type dashboard --csv data/transactions.csv
+cd examples/plotter
+source ../../setup.sh
+source run.sh
 ```
 
-### Reporter Workflow
+3. Reporter example
 
-Location: examples/reporter
+```bash
+cd examples/reporter
+source ../../setup.sh
+source run.sh
+```
 
-Typical command pattern:
+Equivalent direct reporter command:
 
 ```bash
 python3 ${LIBSPATH}/reporter.py --config config.yaml --outdir outputs/ --quiet
 ```
 
-### Flights Workflow
+## Reporter Config Overview
 
-Location: examples/flights
+`reporter.py` expects a YAML file with:
 
-Typical command pattern:
+1. `author`
+2. `runset` entries
+3. optional `report_settings` (for example, matplotlib style)
 
-```bash
-python3 ${LIBSPATH}/flights.py --config config.yaml
-```
+Each run typically defines:
 
-Default CSV fields exported by flights.py:
-
-1. price
-2. transfers
-3. airline
-4. time_of_travel
-5. leaving_time
-6. arrival_time
-
-## Testing
-
-Tests live under tests/.
-
-Run all tests with:
-
-```bash
-python3 -m pytest -s tests
-```
-
-Run a specific test file with:
-
-```bash
-python3 -m pytest -s tests/test_task.py
-```
-
-## Configuration Patterns
-
-YAML configs generally follow a runset-style schema with:
-
-1. author metadata
-2. runset entries (named runs)
-3. plot-config sections
-4. data mappings
-5. report_settings
-
-See example configs in:
-
-1. examples/budget/config.yaml
-2. examples/reporter/config.yaml
-3. examples/flights/config.yaml
-
-## Notes
-
-1. This workspace mixes mature and in-progress utilities.
-2. Some scripts are domain-specific and may require local data assumptions.
-3. Prefer running through examples/ first, then adapt commands/config for your own data.
-
-## Suggested Next Improvements
-
-1. Add a root requirements.txt or pyproject.toml for reproducible installs.
-2. Add per-module docs in docs/ with input/output schemas.
-3. Standardize run.sh interfaces across examples.
-4. Add CI for linting and test execution.# Reporter
+1. data files (`data` map)
+2. x/y/z source columns (`xval`, `yval`, `zval`)
+3. output filename (`outfile`)
+4. `plot-config` settings (labels, limits, scales, type, legend location, etc.)
