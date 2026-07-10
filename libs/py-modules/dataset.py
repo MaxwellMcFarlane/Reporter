@@ -71,6 +71,7 @@ class Dataset():
                 # Read only expected columns, enforce core dtypes, and normalize amount at load time.
                 df = pd.read_csv(
                     self.dfile,
+                    engine = 'pyarrow',
                     usecols=self.cols,
                     parse_dates=[self.cols[0]] if self.cols[0] != '' else None,
                     dtype={'status': 'string', 'type': 'string', 'recurring': 'string'},

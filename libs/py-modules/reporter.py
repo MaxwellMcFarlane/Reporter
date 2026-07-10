@@ -96,6 +96,52 @@ class Run:
         entry = key_cfg.get(tc.name, {}) if isinstance(key_cfg, dict) else {}
         return entry.get("color", "black"), entry.get("style", "solid")
 
+    def _nearest_limit_bounds(self, series: pd.Series, limits):
+        if limits is None or len(limits) == 0:
+            return None
+
+        if not isinstance(limits, (list, tuple, np.ndarray, pd.Series)):
+            limits = [limits]
+
+        numeric_series = pd.to_numeric(series, errors="coerce")
+        if numeric_series.dropna().empty:
+            return None
+
+        try:
+            lower = float(limits[0])
+            upper = float(limits[1] if len(limits) > 1 else limits[0])
+        except (TypeError, ValueError):
+            return None
+
+        lower_idx = (numeric_series - lower).abs().idxmin()
+        upper_idx = (numeric_series - upper).abs().idxmin()
+        actual_lower = numeric_series.loc[lower_idx]
+        actual_upper = numeric_series.loc[upper_idx]
+
+        if pd.isna(actual_lower) or pd.isna(actual_upper):
+            return None
+
+        if actual_lower > actual_upper:
+            actual_lower, actual_upper = actual_upper, actual_lower
+
+        return actual_lower, actual_upper
+
+    def _limit_plot_points(self, x_data: pd.Series, y_data: pd.Series):
+        x_bounds = self._nearest_limit_bounds(x_data, self.plot_config.get("xlim", []))
+        y_bounds = self._nearest_limit_bounds(y_data, self.plot_config.get("ylim", []))
+
+        mask = pd.Series(True, index=x_data.index)
+
+        if x_bounds is not None:
+            mask &= pd.to_numeric(x_data, errors="coerce").between(x_bounds[0], x_bounds[1], inclusive="both")
+        if y_bounds is not None:
+            mask &= pd.to_numeric(y_data, errors="coerce").between(y_bounds[0], y_bounds[1], inclusive="both")
+
+        if not mask.any():
+            return x_data.iloc[0:0], y_data.iloc[0:0]
+
+        return x_data[mask], y_data[mask]
+
     def plot_line_2d(self) -> None:
         console_log("2D Plot being generated", self.msglvl + 1, "info")
         fig = plt.figure(figsize=self.plot_config["figsize"])
@@ -107,6 +153,10 @@ class Run:
                 continue
             x = tc.x * self.plot_config["xscale"] if is_number(tc.x.iloc[0]) else tc.x
             y = tc.y * self.plot_config["yscale"] if is_number(tc.y.iloc[0]) else tc.y
+            x, y = self._limit_plot_points(x, y)
+            if len(x) == 0 or len(y) == 0:
+                console_log(f"No plotted points remain for testcase {tc.name} after applying x/y limits.", self.msglvl + 1, "warn")
+                continue
             color, ls = self.check_key(tc)
             plt.plot(x, y, label=f"{tc.name}", color=color, linestyle=ls)
 
